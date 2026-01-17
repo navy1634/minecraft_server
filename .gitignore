@@ -1,0 +1,9 @@
+# folders
+.terraform
+
+# files
+*.zip
+
+# AI
+.claude
+.serena
