@@ -39,8 +39,9 @@ module "ec2_scheduler" {
 
   instance_id             = module.server.instance_id
   region                  = local.region
-  stop_schedule_hour_utc  = 18 # JST 03:00
   start_schedule_hour_utc = 12 # JST 21:00
+  stop_schedule_hour_utc  = 18 # JST 03:00
+  slack_webhook_url       = var.slack_webhook_url
 
   depends_on = [module.server]
 }

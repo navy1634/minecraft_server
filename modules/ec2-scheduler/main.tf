@@ -3,6 +3,7 @@ resource "aws_cloudwatch_event_rule" "ec2_stop_schedule" {
   name                = "ec2-scheduler-stop-rule"
   description         = "Stop EC2 instance at ${var.stop_schedule_hour_utc}:00 UTC (JST ${(var.stop_schedule_hour_utc + 9) % 24}:00) daily"
   schedule_expression = "cron(0 ${var.stop_schedule_hour_utc} * * ? *)"
+  state               = "ENABLED"
 }
 
 # 停止ターゲット
@@ -27,6 +28,7 @@ resource "aws_cloudwatch_event_rule" "ec2_start_schedule" {
   name                = "ec2-scheduler-start-rule"
   description         = "Start EC2 instance at ${var.start_schedule_hour_utc}:00 UTC (JST ${(var.start_schedule_hour_utc + 9) % 24}:00) daily"
   schedule_expression = "cron(0 ${var.start_schedule_hour_utc} * * ? *)"
+  state               = "ENABLED"
 }
 
 # 起動ターゲット

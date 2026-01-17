@@ -20,3 +20,9 @@ variable "start_schedule_hour_utc" {
   type        = number
   default     = 12
 }
+
+variable "slack_webhook_url" {
+  description = "Slack Webhook URL for notifications"
+  type        = string
+  sensitive   = true
+}

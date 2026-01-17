@@ -17,13 +17,14 @@ resource "aws_lambda_function" "stop_instance" {
   filename         = data.archive_file.stop_lambda_zip.output_path
   function_name    = "ec2-scheduler-stop"
   role             = aws_iam_role.lambda_role.arn
-  handler          = "../../scripts/functions/stop_instance_lambda_function.handler"
+  handler          = "stop_instance_lambda_function.handler"
   runtime          = "python3.13"
   source_code_hash = data.archive_file.stop_lambda_zip.output_base64sha256
 
   environment {
     variables = {
-      INSTANCE_ID = var.instance_id
+      INSTANCE_ID       = var.instance_id
+      SLACK_WEBHOOK_URL = var.slack_webhook_url
     }
   }
 
@@ -38,13 +39,14 @@ resource "aws_lambda_function" "start_instance" {
   filename         = data.archive_file.start_lambda_zip.output_path
   function_name    = "ec2-scheduler-start"
   role             = aws_iam_role.lambda_role.arn
-  handler          = "../../scripts/functions/start_instance_lambda_function.handler"
+  handler          = "start_instance_lambda_function.handler"
   runtime          = "python3.13"
   source_code_hash = data.archive_file.start_lambda_zip.output_base64sha256
 
   environment {
     variables = {
-      INSTANCE_ID = var.instance_id
+      INSTANCE_ID       = var.instance_id
+      SLACK_WEBHOOK_URL = var.slack_webhook_url
     }
   }
 
