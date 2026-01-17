@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  terraform:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: /bin/sh
+    command: -c "while sleep 1000; do :; done"
+    container_name: ms-terraform
+    user: root
+    volumes:
+      - ${HOME}${USERPROFILE}/.aws:/root/.aws:bind
+      - ${PWD}:/terraform:delegated

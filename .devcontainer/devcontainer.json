@@ -1,0 +1,19 @@
+{
+  "name": "terraform",
+  "dockerComposeFile": "compose.devcontainer.yml",
+  "service": "terraform",
+  "remoteUser": "root",
+  "workspaceFolder": "/terraform",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.vscode-github-actions",
+        "github.copilot",
+        "github.copilot-chat",
+        "usernamehw.errorlens",
+        "streetsidesoftware.code-spell-checker",
+        "hashicorp.terraform"
+      ]
+    }
+  }
+}
