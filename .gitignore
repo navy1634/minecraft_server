@@ -3,6 +3,7 @@
 
 # files
 *.zip
+terraform.tfvars
 
 # AI
 .claude

@@ -10,7 +10,7 @@ resource "aws_security_group" "ec2_ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [for ip in var.ssh_ip : "${ip}/32"]
   }
 
   # Minecraftサーバーポート許可

@@ -30,8 +30,8 @@ module "server" {
   ssh_key_name          = "minecraft"
   instance_type         = "t3.medium"
   s3_backup_bucket_name = module.s3_backup.bucket_name
+  ssh_ip                = var.ssh_ip
 }
-
 
 # EC2 Scheduler
 module "ec2_scheduler" {

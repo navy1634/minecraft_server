@@ -28,3 +28,9 @@ variable "s3_backup_bucket_name" {
   description = "S3バックアップバケット名"
   type        = string
 }
+
+variable "ssh_ip" {
+  description = "SSH ホストのグローバルIP"
+  type        = list(string)
+  sensitive   = true
+}
