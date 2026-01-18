@@ -9,8 +9,8 @@ resource "aws_instance" "server" {
   key_name               = var.ssh_key_name
 
   user_data = templatefile("${path.module}/../../scripts/shell/user_data.sh.tpl", {
-    minecraft_service    = templatefile("${path.module}/../../scripts/shell/minecraft.service.tpl", { s3_backup_bucket_name = var.s3_backup_bucket_name })
-    backup_world_script  = file("${path.module}/../../scripts/shell/backup-world.sh")
+    minecraft_service   = templatefile("${path.module}/../../scripts/shell/minecraft.service.tpl", { s3_backup_bucket_name = var.s3_backup_bucket_name })
+    backup_world_script = file("${path.module}/../../scripts/shell/backup-world.sh")
   })
 
   tags = {

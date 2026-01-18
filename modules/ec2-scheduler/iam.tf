@@ -41,7 +41,7 @@ resource "aws_iam_role_policy" "lambda_ec2_policy" {
   })
 }
 
-# EventBridge用IAMロール
+# EventBridge Scheduler用IAMロール
 resource "aws_iam_role" "eventbridge_role" {
   name = "ec2-scheduler-eventbridge-role"
   assume_role_policy = jsonencode({
@@ -51,7 +51,7 @@ resource "aws_iam_role" "eventbridge_role" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = "events.amazonaws.com"
+          Service = "scheduler.amazonaws.com"
         }
       }
     ]
