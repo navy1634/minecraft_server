@@ -21,8 +21,14 @@ variable "start_schedule_hour_jst" {
   default     = 21
 }
 
-variable "slack_webhook_url" {
-  description = "Slack Webhook URL for notifications"
+variable "slack_channel_id" {
+  description = "Slack Channel ID for notifications"
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_bot_token" {
+  description = "Slack Bot Token for sending messages"
   type        = string
   sensitive   = true
 }

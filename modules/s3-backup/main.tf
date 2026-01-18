@@ -1,4 +1,4 @@
-# S3バケット - マインクラフトワールドデータ保存用
+# S3 バケット
 resource "aws_s3_bucket" "minecraft_backup" {
   bucket = var.bucket_name
 

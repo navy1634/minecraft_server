@@ -1,18 +1,18 @@
-# 起動用Lambda関数のアーカイブ
+# インスタンス起動 Lambda 関数
 data "archive_file" "start_lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/../../scripts/functions/start_instance_lambda_function.py"
   output_path = "${path.module}/../../scripts/functions/zip/start_instance_lambda_function.zip"
 }
 
-# 停止用Lambda関数のアーカイブ（バックアップ付き）
+# インスタンス停止 Lambda 関数
 data "archive_file" "stop_lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/../../scripts/functions/stop_instance_lambda_function.py"
   output_path = "${path.module}/../../scripts/functions/zip/stop_instance_lambda_function.zip"
 }
 
-# 停止用Lambda関数（バックアップ付き）
+# インスタンス停止 Lambda 関数
 resource "aws_lambda_function" "stop_instance" {
   filename         = data.archive_file.stop_lambda_zip.output_path
   function_name    = "ec2-scheduler-stop"
@@ -23,8 +23,9 @@ resource "aws_lambda_function" "stop_instance" {
 
   environment {
     variables = {
-      INSTANCE_ID       = var.instance_id
-      SLACK_WEBHOOK_URL = var.slack_webhook_url
+      INSTANCE_ID      = var.instance_id
+      SLACK_CHANNEL_ID = var.slack_channel_id
+      SLACK_BOT_TOKEN  = var.slack_bot_token
     }
   }
 
@@ -34,7 +35,7 @@ resource "aws_lambda_function" "stop_instance" {
   ]
 }
 
-# 起動用Lambda関数
+# インスタンス起動 Lambda 関数
 resource "aws_lambda_function" "start_instance" {
   filename         = data.archive_file.start_lambda_zip.output_path
   function_name    = "ec2-scheduler-start"
@@ -45,8 +46,9 @@ resource "aws_lambda_function" "start_instance" {
 
   environment {
     variables = {
-      INSTANCE_ID       = var.instance_id
-      SLACK_WEBHOOK_URL = var.slack_webhook_url
+      INSTANCE_ID      = var.instance_id
+      SLACK_CHANNEL_ID = var.slack_channel_id
+      SLACK_BOT_TOKEN  = var.slack_bot_token
     }
   }
 

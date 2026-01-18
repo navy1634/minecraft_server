@@ -34,3 +34,20 @@ variable "ssh_ip" {
   type        = list(string)
   sensitive   = true
 }
+
+variable "ami_id" {
+  description = "AMI ID"
+  type        = string
+}
+
+variable "slack_channel_id" {
+  description = "Slack Channel ID for AWS Chatbot"
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_team_id" {
+  description = "Slack Team ID (Workspace ID)"
+  type        = string
+  sensitive   = true
+}

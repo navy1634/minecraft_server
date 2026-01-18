@@ -10,5 +10,5 @@ output "elastic_ip" {
 
 output "ssh_command" {
   description = "SSH接続コマンド"
-  value       = "ssh -i ~/.ssh/${var.ssh_key_name}.pem ec2-user@${aws_eip.server.public_ip}"
+  value       = "ssh -i ~/.ssh/keys/${var.ssh_key_name}.pem ec2-user@${aws_eip.server.public_ip}"
 }

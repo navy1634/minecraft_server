@@ -18,7 +18,7 @@ resource "aws_scheduler_schedule" "ec2_stop_schedule" {
   }
 }
 
-# 停止用Lambda関数のEventBridge実行許可
+# 停止 Lambda 関数の実行許可
 resource "aws_lambda_permission" "allow_eventbridge_stop" {
   statement_id  = "AllowExecutionFromEventBridgeStop"
   action        = "lambda:InvokeFunction"
@@ -47,7 +47,7 @@ resource "aws_scheduler_schedule" "ec2_start_schedule" {
   }
 }
 
-# 起動用Lambda関数のEventBridge実行許可
+# 起動 Lambda 関数の実行許可
 resource "aws_lambda_permission" "allow_eventbridge_start" {
   statement_id  = "AllowExecutionFromEventBridgeStart"
   action        = "lambda:InvokeFunction"

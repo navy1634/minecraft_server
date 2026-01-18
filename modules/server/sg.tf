@@ -1,4 +1,4 @@
-# EC2サーバー用セキュリティグループ
+# EC2 サーバーのセキュリティグループ
 resource "aws_security_group" "ec2_ssh" {
   name        = "${var.project_name}-ec2-server"
   vpc_id      = var.vpc_id

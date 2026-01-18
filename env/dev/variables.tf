@@ -4,8 +4,20 @@ variable "ssh_ip" {
   sensitive   = true
 }
 
-variable "slack_webhook_url" {
-  description = "Slack Webhook URL for EC2 notifications"
+variable "slack_channel_id" {
+  description = "Slack Channel ID for AWS Chatbot"
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_team_id" {
+  description = "Slack Team ID (Workspace ID)"
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_bot_token" {
+  description = "Slack Bot Token for Lambda"
   type        = string
   sensitive   = true
 }

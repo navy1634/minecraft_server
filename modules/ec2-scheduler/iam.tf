@@ -1,4 +1,4 @@
-# Lambda実行用IAMロール
+# Lambda 実行ロール
 resource "aws_iam_role" "lambda_role" {
   name = "ec2-scheduler-lambda-role"
   assume_role_policy = jsonencode({
@@ -15,13 +15,13 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-# Lambda基本実行ポリシー
+# Lambda 基本実行ポリシー
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# EC2制御 & バックアップ用ポリシー
+# EC2 制御ポリシー
 resource "aws_iam_role_policy" "lambda_ec2_policy" {
   name = "ec2-scheduler-lambda-policy"
   role = aws_iam_role.lambda_role.id
@@ -41,7 +41,7 @@ resource "aws_iam_role_policy" "lambda_ec2_policy" {
   })
 }
 
-# EventBridge Scheduler用IAMロール
+# EventBridge Scheduler ロール
 resource "aws_iam_role" "eventbridge_role" {
   name = "ec2-scheduler-eventbridge-role"
   assume_role_policy = jsonencode({
@@ -58,7 +58,7 @@ resource "aws_iam_role" "eventbridge_role" {
   })
 }
 
-# EventBridge → Lambda 実行ポリシー
+# EventBridge Lambda 呼び出しポリシー
 resource "aws_iam_role_policy" "eventbridge_lambda_policy" {
   name = "ec2-scheduler-eventbridge-policy"
   role = aws_iam_role.eventbridge_role.id

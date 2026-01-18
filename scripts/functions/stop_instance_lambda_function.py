@@ -7,54 +7,63 @@ from datetime import datetime, timezone, timedelta
 ec2 = boto3.client('ec2')
 http = urllib3.PoolManager()
 
-def send_slack_notification(status, message):
+def send_slack_notification(status: str, instance_id: str) -> None:
     """
     Slackに通知を送信する
     """
-    slack_webhook_url = os.environ.get('SLACK_WEBHOOK_URL')
-    if not slack_webhook_url:
-        print("SLACK_WEBHOOK_URL is not set")
-        return False
+    slack_channel_id = os.environ.get('SLACK_CHANNEL_ID')
+    slack_bot_token = os.environ.get('SLACK_BOT_TOKEN')
+    if not slack_channel_id or not slack_bot_token:
+        print("SLACK_CHANNEL_ID or SLACK_BOT_TOKEN is not set")
+        return
 
-    jst = timezone(timedelta(hours=9))
-    timestamp = datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S JST')
+    if status == 'success':
+        message = f'Instance {instance_id} を停止しました'
+        color = '#36a64f'
+    else:
+        message = f'Instance {instance_id} の停止に失敗しました'
+        color = '#ff0000'
 
-    color = '#36a64f' if status == 'success' else '#ff0000'
-
-    payload = {
-        'attachments': [
+    slack_message = {
+        "channel": slack_channel_id,
+        "attachments": [
             {
-                'color': color,
-                'title': f'Minecraft EC2インスタンス停止通知',
-                'text': message,
-                'fields': [
+                "color": color,
+                "title": "⏹️ Minecraft EC2インスタンス停止通知",
+                "text": message,
+                "fields": [
                     {
-                        'title': 'ステータス',
-                        'value': status,
-                        'short': True
+                        "title": "インスタンスID",
+                        "value": instance_id,
+                        "short": True
                     },
                     {
-                        'title': 'タイムスタンプ',
-                        'value': timestamp,
-                        'short': True
-                    }
+                        "title": "ステータス",
+                        "value": status,
+                        "short": True
+                    },
                 ]
             }
         ]
     }
 
     try:
-        encoded_msg = json.dumps(payload).encode('utf-8')
-        resp = http.request('POST', slack_webhook_url, body=encoded_msg)
+        encoded_msg = json.dumps(slack_message).encode('utf-8')
+        resp = http.request(
+            'POST',
+            'https://slack.com/api/chat.postMessage',
+            body=encoded_msg,
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {slack_bot_token}'
+            }
+        )
         if resp.status == 200:
             print("Slack notification sent successfully")
-            return True
         else:
             print(f"Failed to send Slack notification: {resp.status}")
-            return False
     except Exception as e:
         print(f"Error sending Slack notification: {str(e)}")
-        return False
 
 def handler(event, context):
     """
@@ -71,19 +80,17 @@ def handler(event, context):
         # EC2インスタンスを停止（Minecraftサービスの停止により自動的にバックアップが実行される）
         ec2.stop_instances(InstanceIds=[instance_id])
 
-        message = f'Instance {instance_id} を停止しました'
-        print(message)
-        send_slack_notification('success', message)
+        send_slack_notification('success', instance_id)
 
         return {
             'statusCode': 200,
-            'body': message
+            'body': f'Instance {instance_id} を停止しました'
         }
 
     except Exception as e:
-        error_msg = f'エラーが発生しました: {str(e)}'
+        error_msg = f'Error: {str(e)}'
         print(error_msg)
-        send_slack_notification('error', error_msg)
+        send_slack_notification('error', instance_id)
         return {
             'statusCode': 500,
             'body': error_msg
