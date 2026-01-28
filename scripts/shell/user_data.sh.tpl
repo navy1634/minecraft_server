@@ -1,12 +1,27 @@
 #!/bin/bash
 set -e
 
+# マイクラ本体
 cat > /etc/systemd/system/minecraft.service <<'SERVICEFILE'
 ${minecraft_service}
 SERVICEFILE
 systemctl daemon-reload
 systemctl enable minecraft
 
+# ログイン通知スクリプト
+cat > /etc/systemd/system/minecraft_observer.service <<'SERVICEFILE'
+${minecraft_observer_service}
+SERVICEFILE
+systemctl daemon-reload
+systemctl enable minecraft_observer
+
+# 監視スクリプト
+cat > /usr/local/bin/observe.sh <<'BACKUPSCRIPT'
+${observe_script}
+BACKUPSCRIPT
+chmod +x /usr/local/bin/observe.sh
+
+# ワールドバックアップスクリプト
 cat > /usr/local/bin/backup-minecraft-world.sh <<'BACKUPSCRIPT'
 ${backup_world_script}
 BACKUPSCRIPT

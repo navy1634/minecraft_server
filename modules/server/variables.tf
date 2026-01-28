@@ -51,3 +51,9 @@ variable "slack_team_id" {
   type        = string
   sensitive   = true
 }
+
+variable "discord_webhook_url" {
+  description = "Discord Webhook URL for Notifications"
+  type        = string
+  sensitive   = true
+}

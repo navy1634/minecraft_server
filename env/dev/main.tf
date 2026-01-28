@@ -33,6 +33,7 @@ module "server" {
   ami_id                = "ami-0e427d06d667000a0"
   slack_channel_id      = var.slack_channel_id
   slack_team_id         = var.slack_team_id
+  discord_webhook_url    = var.discord_webhook
 }
 
 # EC2 Scheduler
