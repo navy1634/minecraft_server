@@ -1,0 +1,68 @@
+---
+- name: Java をインストール
+  ansible.builtin.dnf:
+    name: java-25-amazon-corretto-headless
+    state: present
+  become: true
+
+- name: CloudWatch Agent をインストール
+  ansible.builtin.dnf:
+    name: amazon-cloudwatch-agent
+    state: present
+  become: true
+
+- name: Minecraft ログディレクトリを作成
+  ansible.builtin.file:
+    path: /var/log/minecraft
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Minecraft サービスファイルをデプロイ
+  ansible.builtin.template:
+    src: minecraft.service.tpl
+    dest: /etc/systemd/system/minecraft.service
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: systemd daemon-reload and enable minecraft
+
+- name: Minecraft オブザーバーサービスをデプロイ
+  ansible.builtin.template:
+    src: minecraft_observer.service.tpl
+    dest: /etc/systemd/system/minecraft_observer.service
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: systemd daemon-reload and enable minecraft_observer
+
+- name: ログイン監視スクリプトをデプロイ
+  ansible.builtin.copy:
+    src: observe.sh
+    dest: /usr/local/bin/observe.sh
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: ワールドバックアップスクリプトをデプロイ
+  ansible.builtin.copy:
+    src: backup-world.sh
+    dest: /usr/local/bin/backup-minecraft-world.sh
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: CloudWatch Agent を設定
+  ansible.builtin.command: |
+    /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+      -a fetch-config \
+      -m ec2 \
+      -s \
+      -c "ssm:{{ ssm_parameter_name }}"
+  become: true
+  failed_when: false
+  changed_when: false

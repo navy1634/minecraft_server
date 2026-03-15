@@ -9,12 +9,12 @@ resource "aws_sns_topic" "cloudwatch_alarms" {
 
 # AWS Chatbot Slack Channel Configuration
 resource "aws_chatbot_slack_channel_configuration" "cloudwatch_alarms" {
-  slack_channel_id     = var.slack_channel_id
-  iam_role_arn         = aws_iam_role.chatbot_role.arn
-  slack_team_id        = var.slack_team_id
-  configuration_name   = "${var.project_name}-cloudwatch-alarms"
-  sns_topic_arns       = [aws_sns_topic.cloudwatch_alarms.arn]
-  logging_level        = "INFO"
+  slack_channel_id   = var.slack_channel_id
+  iam_role_arn       = aws_iam_role.chatbot_role.arn
+  slack_team_id      = var.slack_team_id
+  configuration_name = "${var.project_name}-cloudwatch-alarms"
+  sns_topic_arns     = [aws_sns_topic.cloudwatch_alarms.arn]
+  logging_level      = "INFO"
 
   depends_on = [aws_iam_role_policy.chatbot_policy]
 }
@@ -64,8 +64,9 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
   evaluation_periods  = "2"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
-  period              = "60"
-  statistic           = "Average"
+  period              = "120"
+  datapoints_to_alarm                   = 2
+  extended_statistic                    = "p90"
   threshold           = "80"
   alarm_description   = "アラーム: EC2 CPU 使用率が 80% 以上"
   treat_missing_data  = "notBreaching"
@@ -89,10 +90,13 @@ resource "aws_cloudwatch_metric_alarm" "disk_space_low" {
   alarm_description   = "アラーム: ディスク空き容量が 20% 以下"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.cloudwatch_alarms.arn]
-
+  datapoints_to_alarm                   = 2
   dimensions = {
-    InstanceId = aws_instance.server.id
-  }
+          "device"     = "nvme0n1p1"
+          "fstype"     = "xfs"
+          "host"       = "ip-10-0-11-102.ap-northeast-1.compute.internal"
+          "path"       = "/"
+           }
 }
 
 # メモリ使用率が高い場合のアラーム
@@ -102,15 +106,16 @@ resource "aws_cloudwatch_metric_alarm" "memory_high" {
   evaluation_periods  = "2"
   metric_name         = "MemoryUtilization"
   namespace           = "CWAgent"
-  period              = "60"
-  statistic           = "Average"
+  datapoints_to_alarm                   = 2
+  extended_statistic                    = "p90"
+  period              = "120"
   threshold           = "80"
   alarm_description   = "アラーム: EC2 メモリ使用率が 80% 以上"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.cloudwatch_alarms.arn]
 
   dimensions = {
-    InstanceId = aws_instance.server.id
+    host = "ip-10-0-11-102.ap-northeast-1.compute.internal"
   }
 }
 
@@ -126,10 +131,10 @@ resource "aws_cloudwatch_log_group" "ec2_logs" {
 
 # CloudWatch Agent 用パラメータストア設定
 resource "aws_ssm_parameter" "cloudwatch_agent_config" {
-  name            = "/cloudwatch-agent-config/${var.project_name}-server"
-  description     = "CloudWatch Agent configuration for Minecraft server"
-  type            = "String"
-  value           = jsonencode({
+  name        = "/cloudwatch-agent-config/${var.project_name}-server"
+  description = "CloudWatch Agent configuration for Minecraft server"
+  type        = "String"
+  value = jsonencode({
     "metrics" : {
       "namespace" : "CWAgent",
       "metrics_collected" : {

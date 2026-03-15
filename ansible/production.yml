@@ -1,0 +1,10 @@
+---
+- name: Configure Minecraft server
+  hosts: all
+  vars:
+    ansible_host: "{{ lookup('env', 'SERVER_HOST') }}"
+    discord_webhook_url: "{{ lookup('env', 'DISCORD_WEBHOOK_URL') }}"
+    s3_backup_bucket_name: minecraft-dev-world-backup-533267292167
+    ssm_parameter_name: /cloudwatch-agent-config/minecraft-server
+  roles:
+    - minecraft_server

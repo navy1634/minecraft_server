@@ -28,7 +28,7 @@ BACKUPSCRIPT
 chmod +x /usr/local/bin/backup-minecraft-world.sh
 
 # javaのインストール
-sudo dnf install java-25-amazon-corretto-headless.aarch64 -y
+sudo dnf install java-25-amazon-corretto-headless -y
 
 # CloudWatch Agent のインストール
 sudo dnf install -y amazon-cloudwatch-agent

@@ -1,0 +1,11 @@
+---
+- name: Configure Minecraft server
+  hosts: minecraft_servers
+  vars_files:
+    - .env
+  vars:
+    ansible_host: "{{ ssh_ip }}"
+    s3_backup_bucket_name: minecraft-dev-world-backup-533267292167
+    ssm_parameter_name: /cloudwatch-agent-config/minecraft-server
+  roles:
+    - minecraft_server

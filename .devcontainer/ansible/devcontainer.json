@@ -1,0 +1,28 @@
+{
+  "name": "ansible",
+  "dockerComposeFile": [
+    "../../compose.yml",
+    "compose.devcontainer.yml"
+  ],
+  "service": "ansible",
+  "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.ansible",
+        "ms-python.python"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "ansible.python.interpreterPath": "/usr/bin/python3"
+      }
+    }
+  },
+  "forwardPorts": [
+    2222
+  ],
+  "remoteUser": "root"
+}
