@@ -1,0 +1,14 @@
+---
+- name: Systemd daemon-reload and enable minecraft
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: minecraft
+    enabled: true
+  become: true
+
+- name: Systemd daemon-reload and enable minecraft_observer
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: minecraft_observer
+    enabled: true
+  become: true

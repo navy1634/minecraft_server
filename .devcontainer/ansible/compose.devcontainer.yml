@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  ansible:
+    build:
+      context: .
+      dockerfile: ./.devcontainer/ansible/Dockerfile
+    container_name: ms-ansible
+    command: ["-c", "while sleep 1000; do :; done"]
+    volumes:
+      - ./ansible:/workspace
+      - ~/.aws:/root/.aws
+      - ~/.claude:/root/.claude
+      - ~/.ssh:/root/.ssh
+      - ssh-keys:/tmp/ssh-keys
+    networks:
+      - minecraft-network
+    environment:
+      - ANSIBLE_HOST_KEY_CHECKING=False
+
+networks:
+  minecraft-network:
+    external: true
+    name: minecraft-network

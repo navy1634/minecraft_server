@@ -11,7 +11,7 @@ ExecStart=java \
   @libraries/net/neoforged/neoforge/21.11.26-beta/unix_args.txt \
   nogui
 
-ExecStop=/bin/bash -c '/usr/local/bin/backup-minecraft-world.sh ${s3_backup_bucket_name}'
+ExecStop=/bin/bash -c '/usr/local/bin/backup-minecraft-world.sh {{ s3_backup_bucket_name | default("") }}'
 
 Restart=always
 RestartSec=10

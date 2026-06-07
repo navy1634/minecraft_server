@@ -1,0 +1,6 @@
+---
+# 本番レベルの厳密な設定
+profile: production
+strict: true
+
+skip_list: []

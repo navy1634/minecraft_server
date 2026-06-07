@@ -25,3 +25,19 @@ tflint --recursive --config="~/.tflint.hcl"
 ```sh
 terraform-docs markdown table --output-file README.md
 ```
+
+<!-- BEGIN_TF_DOCS -->
+
+
+## Resources
+
+No resources.
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

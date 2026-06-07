@@ -1,0 +1,46 @@
+name: Terraform Plan
+description: Run terraform plan
+
+inputs:
+  terraform_version:
+    description: Terraform version
+    required: true
+  tfcmt_version:
+    description: tfcmt version
+    required: true
+  aws_role_arn:
+    description: AWS IAM Role ARN for Terraform execution
+    required: true
+  aws_profile:
+    description: AWS CLI profile name to use for Terraform execution
+    required: true
+  region:
+    description: AWS region for Terraform execution
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws_role_arn }}
+        aws-region: ${{ inputs.region }}
+
+    - name: Create profile
+      shell: bash
+      run: |
+        aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile ${{ inputs.aws_profile }}
+        aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile ${{ inputs.aws_profile }}
+        aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile ${{ inputs.aws_profile }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ inputs.terraform_version }}
+
+    - name: Setup tfcmt
+      uses: shmokmt/actions-setup-tfcmt@v2
+      with:
+        version: ${{ inputs.tfcmt_version }}

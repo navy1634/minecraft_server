@@ -1,0 +1,56 @@
+name: CD for Infrastructure
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "*"
+      - ".github/workflows/cd_terraform.yml"
+      - "!terraform/README.md"
+
+env:
+  env: ${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+  environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+  AWS_PROFILE_ACCOUNT: default
+  AWS_REGION: ap-northeast-1
+  TERRAFORM_VERSION: 1.15.5
+  TFCMT_VERSION: 4.14.15
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  apply:
+    name: apply ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+
+    defaults:
+      run:
+        working-directory: env/${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.3
+
+      - name: Terraform setup
+        uses: ./.github/actions/setup
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          tfcmt_version: v${{ env.TFCMT_VERSION }}
+          aws_role_arn: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws_profile: ${{ env.AWS_PROFILE_ACCOUNT }}
+          region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve
+        env:
+          TF_VAR_ssh_ip: ${{ secrets.SSH_IP }}
+          TF_VAR_slack_channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          TF_VAR_slack_team_id: ${{ secrets.SLACK_TEAM_ID }}
+          TF_VAR_slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}

@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  minecraft-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: minecraft-server
+    hostname: minecraft-server
+    ports:
+      - "2222:22"
+    volumes:
+      - ssh-keys:/home/ansible/.ssh
+    environment:
+      - ANSIBLE_HOST_KEY_CHECKING=False
+    networks:
+      - minecraft-network
+
+networks:
+  minecraft-network:
+    driver: bridge
+    name: minecraft-network
+
+volumes:
+  ssh-keys:
+    driver: local
