@@ -18,15 +18,6 @@ resource "aws_instance" "server" {
       Name = "${var.project_name}-root-volume"
     }
   }
-
-  user_data = templatefile("${path.module}/../../scripts/shell/user_data.sh.tpl", {
-    minecraft_service          = templatefile("${path.module}/../../scripts/shell/minecraft.service.tpl", { s3_backup_bucket_name = var.s3_backup_bucket_name })
-    minecraft_observer_service = templatefile("${path.module}/../../scripts/shell/minecraft_observer.service.tpl", { webhooks_url = var.discord_webhook_url })
-    observe_script             = file("${path.module}/../../scripts/shell/observe.sh")
-    backup_world_script        = file("${path.module}/../../scripts/shell/backup-world.sh")
-    ssm_parameter_name         = aws_ssm_parameter.cloudwatch_agent_config.name
-  })
-
   tags = {
     Name = "${var.project_name}-server"
   }
