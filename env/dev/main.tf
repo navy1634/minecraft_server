@@ -1,11 +1,11 @@
-locals {
-  env     = "dev"
-  project = "minecraft"
-  region  = "ap-northeast-1"
-}
+# locals {
+#   env     = "dev"
+#   project = "minecraft"
+#   region  = "ap-northeast-1"
+# }
 
-# 現在のAWSアカウントIDを取得
-data "aws_caller_identity" "current" {}
+# # 現在のAWSアカウントIDを取得
+# data "aws_caller_identity" "current" {}
 
 # # VPC
 # module "vpc" {

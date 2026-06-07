@@ -1,0 +1,48 @@
+name: CD for Infrastructure
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "*"
+      - ".github/workflows/cd_terraform.yml"
+      - "!terraform/README.md"
+
+env:
+  env: ${{ github.base_ref == 'main' && 'prod' || 'dev' }}
+  environment: ${{ github.base_ref == 'main' && 'production' || 'development' }}
+  AWS_PROFILE: default
+  AWS_REGION: ap-northeast-1
+  TERRAFORM_VERSION: 1.15.5
+  TFCMT_VERSION: 4.14.15
+  TFLINT_VERSION: 0.63.1
+
+jobs:
+  plan:
+    name: terraform CD
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'main' && 'prod' || 'dev' }}
+
+    defaults:
+      run:
+        working-directory: ./env/${{ github.ref == 'main' && 'prd' || 'dev' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.3
+
+      - name: Terraform setup
+        uses: ./.github/actions/setup
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          tfcmt_version: v${{ env.TFCMT_VERSION }}
+          aws_role_arn: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws_profile: ${{ env.AWS_PROFILE }}
+          region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve
