@@ -11,8 +11,8 @@ on:
       - "!terraform/README.md"
 
 env:
-  env: ${{ github.base_ref == 'main' && 'prod' || 'dev' }}
-  environment: ${{ github.base_ref == 'main' && 'production' || 'development' }}
+  env: ${{ github.event.pull_request.base.ref == 'main' && 'prod' || 'dev' }}
+  environment: ${{ github.event.pull_request.base.ref == 'main' && 'production' || 'development' }}
   AWS_PROFILE_ACCOUNT: default
   AWS_REGION: ap-northeast-1
   TERRAFORM_VERSION: 1.15.5
@@ -26,9 +26,9 @@ permissions:
 
 jobs:
   check:
-    name: check ${{ github.base_ref == 'main' && 'production' || 'development' }}
+    name: check ${{ github.event.pull_request.base.ref == 'main' && 'production' || 'development' }}
     runs-on: ubuntu-latest
-    environment: ${{ github.base_ref == 'main' && 'prod' || 'dev' }}
+    environment: ${{ github.event.pull_request.base.ref == 'main' && 'prod' || 'dev' }}
 
     steps:
       - name: Checkout repository
@@ -70,23 +70,19 @@ jobs:
       - name: Render terraform docs and push changes back to PR
         uses: terraform-docs/gh-actions@v1.4.1
         with:
-          output-file: README.md
-          output-method: inject
+          working-dir: .
+          config-file: .terraform-docs.yml
           git-push: "true"
-          recursive: "true"
-          recursive-path: modules
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   plan:
     needs: check
-    name: plan ${{ github.base_ref == 'main' && 'production' || 'development' }}
+    name: plan ${{ github.event.pull_request.base.ref == 'main' && 'production' || 'development' }}
     runs-on: ubuntu-latest
-    environment: ${{ github.base_ref == 'main' && 'prod' || 'dev' }}
+    environment: ${{ github.event.pull_request.base.ref == 'main' && 'prod' || 'dev' }}
 
     defaults:
       run:
-        working-directory: env/${{ github.base_ref == 'main' && 'prd' || 'dev' }}
+        working-directory: env/${{ github.event.pull_request.base.ref == 'main' && 'prd' || 'dev' }}
 
     steps:
       - name: Checkout repository
