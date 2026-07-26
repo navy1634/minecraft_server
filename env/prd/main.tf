@@ -1,7 +1,19 @@
 locals {
-  env     = "dev"
+  env     = "prd"
   project = "minecraft"
   region  = "ap-northeast-1"
+}
+
+data "aws_secretsmanager_secret" "terraform_variables" {
+  name = "/${local.project}/terraform-${local.env}"
+}
+
+data "aws_secretsmanager_secret_version" "terraform_variables" {
+  secret_id = data.aws_secretsmanager_secret.terraform_variables.id
+}
+
+locals {
+  terraform_variables = jsondecode(data.aws_secretsmanager_secret_version.terraform_variables.secret_string)
 }
 
 # 現在のAWSアカウントIDを取得
@@ -29,10 +41,10 @@ module "server" {
   ssh_key_name          = "minecraft"
   instance_type         = "t4g.medium"
   s3_backup_bucket_name = module.s3_backup.bucket_name
-  ssh_ip                = var.ssh_ip
+  ssh_ip                = local.terraform_variables.ssh_ip
   ami_id                = "ami-0e427d06d667000a0"
-  slack_channel_id      = var.slack_channel_id
-  slack_team_id         = var.slack_team_id
+  slack_channel_id      = local.terraform_variables.slack_channel_id
+  slack_team_id         = local.terraform_variables.slack_team_id
 }
 
 # EC2 Scheduler
@@ -43,8 +55,8 @@ module "ec2_scheduler" {
   region                  = local.region
   start_schedule_hour_jst = 20 # JST 20:00
   stop_schedule_hour_jst  = 3  # JST 03:00
-  slack_channel_id        = var.slack_channel_id
-  slack_bot_token         = var.slack_bot_token
+  slack_channel_id        = local.terraform_variables.slack_channel_id
+  slack_bot_token         = local.terraform_variables.slack_bot_token
 
   depends_on = [module.server]
 }

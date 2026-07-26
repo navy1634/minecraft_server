@@ -23,7 +23,7 @@ runs:
 
   steps:
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
       with:
         role-to-assume: ${{ inputs.aws_role_arn }}
         aws-region: ${{ inputs.region }}
@@ -36,11 +36,11 @@ runs:
         aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile ${{ inputs.aws_profile }}
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
+      uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
       with:
         terraform_version: ${{ inputs.terraform_version }}
 
     - name: Setup tfcmt
-      uses: shmokmt/actions-setup-tfcmt@v2
+      uses: shmokmt/actions-setup-tfcmt@04d5aa6dc61eaa69a4d00257224c9b97f4857819 # v2.1.1
       with:
         version: ${{ inputs.tfcmt_version }}

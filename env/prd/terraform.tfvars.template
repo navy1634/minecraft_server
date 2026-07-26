@@ -1,5 +1,0 @@
-ssh_ip            = ["0.0.0.0"]
-slack_channel_id  = "C0123456789"
-slack_team_id     = "T0123456789"
-slack_bot_token   = "xoxb-your-token-here"
-discord_webhook = "https://discord.com/api/webhooks/"

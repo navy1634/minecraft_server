@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Terraform setup
         uses: ./.github/actions/setup
@@ -49,8 +49,3 @@ jobs:
 
       - name: Terraform apply
         run: terraform apply -auto-approve
-        env:
-          TF_VAR_ssh_ip: ${{ secrets.SSH_IP }}
-          TF_VAR_slack_channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          TF_VAR_slack_team_id: ${{ secrets.SLACK_TEAM_ID }}
-          TF_VAR_slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
